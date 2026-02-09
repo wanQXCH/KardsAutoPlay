@@ -1,19 +1,11 @@
-Only Support Fixed Screen Resolution: 1920x1080  
+使用前请将游戏分辨率调整至:1920x1080  
+原代码来源于[分支 ·kasimir82/Kards1939BetterAFK](https://github.com/kasimir82/Kards1939BetterAFK/branches)
+本人仅仅做了少数优化
+使用时，将需要刷经验的卡组名字中添加“经验”二字，
+程序将自动选中带经验的卡组
+本人阉割了原程序中单位交互及指令指向能力,虽然提高了运行速度，但是限制了刷经验的卡组
+> 推荐卡组：日苏滚木:%%34|5C5H63647Sp2qu;667YqItO;5y8cp1qs;5P5ZqK
+> 类似的卡组都可以刷经验
 
-How to install modules:  
-pip install pyScreeze numpy opencv_python PyAutoGUI PyGetWindow Pillow keyboard  
-
-Run .py  and it will auto-start from the launcher.  
-Logic based on [分支 ·kasimir82/Kards1939BetterAFK](https://github.com/kasimir82/Kards1939BetterAFK/branches) Thank you! 
-Please set the launcher to English and the game to simplified Chinese.  
-
-Script Run sequence:  
-Click the main button -> click start -> select the card book that has '经验' in its name -> auto begin  
-
-Functions completed now:  
-
-1. Auto-select cards  
-2. Auto-attack hq, and attack guardian units.  
-3. Auto-send messages (randomly).  
-4. Auto-start next round  
-5. Auto fighter bomber and mortar operation  
+有代码基础的可以尝试改进，原代码注释丰富易懂,没有基础的可直接
+需要退出程序的按下空格即可
