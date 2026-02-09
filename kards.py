@@ -154,6 +154,7 @@ def surrender(): #自动投降
     pyautogui.move(-120, 43)
     time.sleep(0.12)
     pyautogui.click()
+    time.sleep(3)
 
 def check_abnormal(check_orange_passbutton=True):
     global ocr_stamina
@@ -168,7 +169,6 @@ def check_abnormal(check_orange_passbutton=True):
 
     if round_total_time >= 300:
         surrender()
-        time.sleep(3)
         check_mission_passfail()
         check_current_level()
 
@@ -791,6 +791,9 @@ def out_of_gameround_checking_routine():
             check_current_level.count = 0
             kill_process_by_keyword("kards")
             print(formatted_time + "发现进程卡住太久, 杀进程2")
+            surrender()
+            check_mission_passfail()
+            check_current_level()
         #gameround_timeout_bug_reset()
 
     if enter_game_seq == 0:  # 查找左上角游戏图标和点击开始按钮
@@ -879,6 +882,9 @@ def out_of_gameround_checking_routine():
             check_current_level.count = 0
             kill_process_by_keyword("kards")
             print(formatted_time + "发现进程卡住太久, 杀进程1")
+            surrender()
+            check_mission_passfail()
+            check_current_level()
 
         pyautogui.moveTo(save_pos, duration=random.uniform(0.5, 0.8))
         pyautogui.click(save_pos)
@@ -904,7 +910,9 @@ def out_of_gameround_checking_routine():
         kill_process_by_keyword("launcher")
         print(formatted_time + "[然然]触发了重新登陆，杀进程3")
         time.sleep(2)
-        sys.exit(0)
+        surrender()
+        check_mission_passfail()
+        check_current_level()
 
 
 def begin_new_game_routine():
@@ -1093,7 +1101,7 @@ def move_drag_to_any_target(target_type='ghfbmit89', target_zone='u', drag_is_Tr
                 case '9':  # Deal the card
                     if zone_number == 'l': pyautogui.click(bak_mouse_pos)
                     mouse_shake()
-                    pyautogui.moveTo((mouse_x, pyautogui.size()[1] * 65 // 100), duration=0.5)
+                    pyautogui.moveTo((mouse_x, pyautogui.size()[1] * 65 // 100), duration=0.2)
                     pyautogui.mouseUp()
                     return [target_type, target_zone]
     return [target_type, target_zone]
@@ -1180,19 +1188,10 @@ def play_round1():  #用于抽牌
                     # ----------------------- 特殊单位处理开始 -----------------------
                     operating_unit = {'atk': 99}  # 用于攻击对方攻击力最高的目标
 
-                    print(formatted_time + "特殊指令处理部分开始")
                     # 3代表中立 1代表被我占领 2代表敌方占领 0代表未知
-                    if ('' in joined_ocrresult or '车体' in joined_ocrresult or '至死方休' in joined_ocrresult
-                            or '繁荣' in joined_ocrresult or '烈日' in joined_ocrresult or '机动防御' in joined_ocrresult
-                            or '北极' in joined_ocrresult or '冬季战争' in joined_ocrresult or '击破' in joined_ocrresult
-                            or '第227' in joined_ocrresult or '一宇' in joined_ocrresult or '转折点' in joined_ocrresult
-                            or '天皇' in joined_ocrresult or '方面军' in joined_ocrresult or '扩张' in joined_ocrresult
-                            or '山本' in joined_ocrresult or '侦察队' in joined_ocrresult or '穷追猛打' in joined_ocrresult
-                            or '阔' in joined_ocrresult):
-                        print(formatted_time + "一杯茶专属处理")
-                        move_drag_to_any_target('9')
-                        continue
-                    if '重心' in joined_ocrresult:
+                    print(formatted_time + "一杯茶专属处理")
+                    move_drag_to_any_target('9')
+                    '''if '重心' in joined_ocrresult:
                         pyautogui.dragTo(x, y=pyautogui.size()[1] // 3, duration=0.5)
                         time.sleep(3)
                         pyautogui.click(pyautogui.size()[0] // 3 + 50, y=pyautogui.size()[1] // 2, duration=0.5)
@@ -1223,7 +1222,6 @@ def play_round1():  #用于抽牌
                         else:
                             move_drag_to_any_target('gfbmit', 'u')
                         #continue
-                    '''
                     if find_ordered_keywords(joined_ocrresult, '指令', '敌方', '空军', '伤害') != None or\
                             find_ordered_keywords(joined_ocrresult, '指令', '灯火') != None: #Mark2
                         print(formatted_time + '正则处理: Mark2')
@@ -1456,7 +1454,10 @@ def main():
                 except:
                     start_window = gw.getWindowsWithTitle("Xsolla Launcher")[0]
                 print(formatted_time + "已寻找到启动器窗口， 开始执行打开游戏动作")
+                print(start_window)
                 start_window.activate()
+                start_window.activate()
+                time.sleep(1)
                 start_game_button = pyautogui.locateOnScreen(start_game_img)
                 if start_game_button:
                     pyautogui.click(start_game_button)
