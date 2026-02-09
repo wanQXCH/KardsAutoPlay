@@ -147,10 +147,10 @@ class Box:
 
 def surrender(): #自动投降
     print(formatted_time + "检测到单局时间过长，自动投降")
-    settings_button = pyautogui.locateOnScreen(gear_img)
-    pyautogui.moveTo(settings_button)
-    pyautogui.click(settings_button)
-    surrender_button = pyautogui.locateOnScreen(self_destruct_img)
+    #settings_button = pyautogui.locateOnScreen(gear_img)
+    pyautogui.moveTo(1866, 29)
+    pyautogui.click()
+    #surrender_button = pyautogui.locateOnScreen(self_destruct_img)
     pyautogui.move(-120, 43)
     time.sleep(0.12)
     pyautogui.click()
@@ -221,6 +221,7 @@ def keyboard_check():
     keyboard.wait('space')
     print("检测到space按下, 程序中断退出")
     is_running = False
+    exit(0)
 
 def check_frontline_status():
     global front_line_status
@@ -497,7 +498,7 @@ def get_better_target(unit_list=return_target, target_id='infantry', max_def=9):
 def handle_old_log(log_filename="run_log.txt"):
     """处理已存在的旧日志文件"""
     if os.path.exists(log_filename):
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         old_log_filename = f"log_{timestamp}.txt"
         os.rename(log_filename, old_log_filename)
 
@@ -791,9 +792,9 @@ def out_of_gameround_checking_routine():
             check_current_level.count = 0
             kill_process_by_keyword("kards")
             print(formatted_time + "发现进程卡住太久, 杀进程2")
-            surrender()
             check_mission_passfail()
             check_current_level()
+            return 1
         #gameround_timeout_bug_reset()
 
     if enter_game_seq == 0:  # 查找左上角游戏图标和点击开始按钮
@@ -867,8 +868,7 @@ def out_of_gameround_checking_routine():
         kill_process_by_keyword("kards")
         kill_process_by_keyword("launcher")
         print(formatted_time + "[然然]触发了重新登陆，杀进程2")
-        time.sleep(2)
-        sys.exit(0)
+        return 1
 
     #if error_handling(continue_button_image, "点击了继续按钮, 结束战斗（一般是输了）", 0.7, reset_stage=True):
 
@@ -882,9 +882,7 @@ def out_of_gameround_checking_routine():
             check_current_level.count = 0
             kill_process_by_keyword("kards")
             print(formatted_time + "发现进程卡住太久, 杀进程1")
-            surrender()
-            check_mission_passfail()
-            check_current_level()
+            return 1
 
         pyautogui.moveTo(save_pos, duration=random.uniform(0.5, 0.8))
         pyautogui.click(save_pos)
@@ -910,9 +908,8 @@ def out_of_gameround_checking_routine():
         kill_process_by_keyword("launcher")
         print(formatted_time + "[然然]触发了重新登陆，杀进程3")
         time.sleep(2)
-        surrender()
-        check_mission_passfail()
-        check_current_level()
+        return 1
+    return 0
 
 
 def begin_new_game_routine():
@@ -1420,6 +1417,11 @@ def play_round2():
 
 #-----------------------------------------------MAIN---------------------------------------------------
 def main():
+    setup_logging()
+    while is_running:
+        main_could_restart()
+
+def main_could_restart():
     global enter_game_seq
     global formatted_time
     global enemy_headquarters_pos
@@ -1431,7 +1433,6 @@ def main():
     reset_game_stage()
     print(" -- KARDs 1939 Better AFK, Ver 250912 by Eason -- ")
     play_ground()
-    setup_logging()
     while is_running:
         now = datetime.now()
         formatted_time = now.strftime('%m-%d %H:%M:%S -- ')
@@ -1456,7 +1457,6 @@ def main():
                 print(formatted_time + "已寻找到启动器窗口， 开始执行打开游戏动作")
                 print(start_window)
                 start_window.activate()
-                start_window.activate()
                 time.sleep(1)
                 start_game_button = pyautogui.locateOnScreen(start_game_img)
                 if start_game_button:
@@ -1468,7 +1468,10 @@ def main():
                 print(e)
 
         if game_active:
-            out_of_gameround_checking_routine()
+            if out_of_gameround_checking_routine() == 1:
+                print(formatted_time + "重启程序")
+                time.sleep(2)
+                return
             begin_new_game_routine()
 
 
@@ -1479,7 +1482,7 @@ def play_ground():
     global return_img_pos
 
     if 0:  #For debugging
-        now = datetime.now()
+        now = datetime.jnow()
         formatted_time = now.strftime("DEBUG Session " + '%m-%d %H:%M:%S -- ')
         # ---------------- Debug Section Start --------------------
         check_junxu_progress()
